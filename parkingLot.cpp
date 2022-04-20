@@ -5,26 +5,12 @@ using namespace std;
 class ParkingLot{
 
     int parkingLotId;
-    Location location;
     int carCapacity;
     int bikeCapacity;
-    vector<Parking> parkingSlots;
+    // vector<Parking> parkingSlots;
+    vector<Vehicle> vehiclesList;
     RateChart ratechart;
 };
-
-class Location{
-    string City;
-    string State;
-    int Pincode;
-};
-
-class Parking{
-    int parkingId;
-    ParkingStatus status;
-    vector<Vehicle> parkedVehicles;
-};
-
-enum ParkingStatus{Alloted,Free,UnderMantainance,BikeOnly};
 
 class RateChart{
     int perHourBike;
@@ -68,9 +54,9 @@ class Account{
 class Guard: public User{
     
     ParkingLot parkingLot;
-    vector<Parking> searchParkings(Vehicle);
-    void parkVehicle(Parking,Vehicle);
-    void freeParking(Parking);
+    bool searchParkings(Vehicle v);
+    void parkVehicle(Vehicle v);
+    void freeParking(Vehicle v);
 };
 
 class Admin: public User{
@@ -78,4 +64,5 @@ class Admin: public User{
     vector<ParkingInfo> getParkingHistory(Vehicle v);
     void addParkingLot();
     void addParking(ParkingLot);
+    vector<ParkingLot> parkingLots;
 };
