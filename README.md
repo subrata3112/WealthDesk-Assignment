@@ -19,4 +19,5 @@ Known Bugs/Missings:-
 - Admins can only access one parking lot at a time.
 - No errors/exception handling methods applied.
 - No authentication added. User class is not getting completely used.
-- User Info not getting saved. 
+- User Info not getting saved.
+- Had to merge guard and admin users to avoid complications in some methods.
