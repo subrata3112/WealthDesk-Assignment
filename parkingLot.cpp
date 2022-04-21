@@ -81,12 +81,9 @@ class Admin{
     public:
         vector<ParkingLot> parkingLots;
         vector<Vehicle> vehicleList;
-        Admin(){
-            parkingLots = new vector<ParkingLot>;
-            vehicleList = new vector<Vehicle>;
-        };
-        ParkingLot parkingLot = parkingLots[parkingLots.size() - 1];
+    
         bool searchParkings(Vehicle v){
+            ParkingLot parkingLot = parkingLots[parkingLots.size() - 1];
             if(v.type == Bike){
                 if(parkingLot.bikeCapacity > 0) return true;
                 else if(parkingLot.carCapacity > 0) return true;
@@ -97,11 +94,13 @@ class Admin{
             else return true;
         };
         void parkVehicle(Vehicle v){
+            ParkingLot parkingLot = parkingLots[parkingLots.size() - 1];
             cout<<"Activated Parking: "<<parkingLot.parkingLotId<<endl;;
             if(!searchParkings(v)){
                 cout<<"No Parking slots empty!"<<endl;
                 return;
             }
+            else cout<<"\nVehicle Parked!"<<endl;
             if(v.type == Bike){
                 if(parkingLot.bikeCapacity > 0) parkingLot.bikeCapacity--;
                 else if(parkingLot.carCapacity > 0  && parkingLot.sharedBikeParked == false){
@@ -119,8 +118,10 @@ class Admin{
             time_t t_time = time(0);
             tm *local_time = localtime(&t_time);
             v.currentInfo.startTime = local_time;
+            v.currentInfo.parkingLotId = parkingLot.parkingLotId;
         };
         void freeParking(string vehicle_id){
+            ParkingLot parkingLot = parkingLots[parkingLots.size() - 1];
             Vehicle v;
             for(auto i: vehicleList){
                 if(i.vehicleId == vehicle_id) v = i;
@@ -144,7 +145,7 @@ class Admin{
             int id = rand();
             ParkingLot p1(id,carCapacity,bikeCapacity,rc);
             parkingLots.push_back(p1);
-            cout<<"Parking Lot created with id "<<id<<endl;
+            cout<<"\nParking Lot created with id "<<id<<endl;
         };
 
         vector<ParkingInfo> getParkingHistory(string vehicle_id){
@@ -153,23 +154,28 @@ class Admin{
             for(auto i: vehicleList){
                 if(i.vehicleId == vehicle_id) v = i;
             }
+            for(auto i: v.parkingHistory){
+                    cout<<"Parking Lot ID -> "<<i.parkingLotId<<endl;
+                    cout<<"Parking Start -> "<<i.startTime<<endl;
+                    cout<<"Parking Ends -> "<<i.exitTime<<endl;
+                    cout<<"Total Amount -> "<<i.amountPaid<<"\n\n\n";
+            }
             return v.parkingHistory;
         };
 };
 
 int main(){
-    int i;
+    int x;
     Admin a;
     do{
         
-        cout<<"...Parking Lot Menu...\n"<<endl;
+        cout<<"\n...Parking Lot Menu...\n"<<endl;
         cout<<"1. Add a new Parking Lot"<<endl;
         cout<<"2. Park a vehicle"<<endl;
         cout<<"3. Remove a vehicle"<<endl;
         cout<<"4. Get parking history"<<endl;
         cout<<"5. Exit"<<endl;
         cout<<"Chose the action: ";
-        int x;
         cin>>x;
 
         switch (x)
@@ -226,17 +232,19 @@ int main(){
                 cout<<"Enter vehicle number (Avoid spaces): ";
                 cin>>VehicleNum;
                 vector<ParkingInfo> history = a.getParkingHistory(VehicleNum);
-                for(auto x: history){
-                    cout<<"Parking Lot ID -> "<<x.parkingLotId<<endl;
-                    cout<<"Parking Start -> "<<x.startTime<<endl;
-                    cout<<"Parking Ends -> "<<x.exitTime<<endl;
-                    cout<<"Total Amount -> "<<x.amountPaid<<"\n\n\n";
+                for(auto i: history){
+                    cout<<"Parking Lot ID -> "<<i.parkingLotId<<endl;
+                    cout<<"Parking Start -> "<<i.startTime<<endl;
+                    cout<<"Parking Ends -> "<<i.exitTime<<endl;
+                    cout<<"Total Amount -> "<<i.amountPaid<<"\n\n\n";
                 }
             break;}
+        case 5:
+            {break;}
         default:
                 cout<<"Invalid Input! Please try again."<<endl;;
             break;
         }
 
-    }while(i != 5);
+    }while(x != 5);
 }
