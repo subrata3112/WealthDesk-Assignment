@@ -2,7 +2,7 @@
 #include<ctime>
 using namespace std;
 
-enum VehicleType{Bike,Car,Heavy};
+enum VehicleType{Bike,Car,Heavy};                                   
 
 class ParkingInfo{
     public:
@@ -12,13 +12,13 @@ class ParkingInfo{
         int amountPaid;
 };
 
-class Vehicle{
+class Vehicle{                                                   //Vehicle Class
     public:
         string vehicleId;
         VehicleType type;
         ParkingInfo currentInfo;
-        vector<ParkingInfo> parkingHistory;
-        bool inCarParking;
+        vector<ParkingInfo> parkingHistory;                      //List of previous parkings
+        bool inCarParking;                               //True if a bike is parked in car parking
 
         // Vehicle();
 
@@ -29,7 +29,7 @@ class Vehicle{
         // }
 };
 
-class RateChart{
+class RateChart{                                             //RateChart Class
     public:
         int perHourBike;
         int perHourCar;
@@ -44,13 +44,13 @@ class RateChart{
         // }
 };
 
-class ParkingLot{
+class ParkingLot{                                          //ParkingLot Class
 
     public:
         int parkingLotId;
         int carCapacity;
         int bikeCapacity;
-        bool sharedBikeParked;
+        bool sharedBikeParked;                    //True if one bike can share space with another.
     // vector<Parking> parkingSlots;
         
         RateChart ratechart;
@@ -90,8 +90,10 @@ class Admin{
                 else return false;
             }
 
-            else if(parkingLot.carCapacity == 0) return false;
-            else return true;
+            else{
+                if(parkingLot.carCapacity>0) return true;
+                else return false;
+            }
         };
         void parkVehicle(Vehicle v){
             ParkingLot parkingLot = parkingLots[parkingLots.size() - 1];
@@ -102,9 +104,9 @@ class Admin{
             }
             else cout<<"\nVehicle Parked!"<<endl;
             if(v.type == Bike){
-                if(parkingLot.bikeCapacity > 0) parkingLot.bikeCapacity--;
+                if(parkingLot.bikeCapacity > 0) parkingLot.bikeCapacity-=1;
                 else if(parkingLot.carCapacity > 0  && parkingLot.sharedBikeParked == false){
-                    parkingLot.carCapacity--;
+                    parkingLot.carCapacity-=1;
                     parkingLot.sharedBikeParked = true;
                     v.inCarParking = true;
                 }
@@ -113,7 +115,8 @@ class Admin{
                     v.inCarParking = true;
                 }
             }
-            else parkingLot.carCapacity--;
+            else parkingLot.carCapacity-=1;
+            parkingLots.push_back(parkingLot);
             vehicleList.push_back(v);
             time_t t_time = time(0);
             tm *local_time = localtime(&t_time);
@@ -130,15 +133,18 @@ class Admin{
             tm *local_time = localtime(&t_time);
             v.currentInfo.exitTime = local_time;
             int hours = v.currentInfo.exitTime->tm_hour - v.currentInfo.startTime->tm_hour + 1;
+            cout<<"The vehicle stayed for "<<hours<<" hours."<<endl;
             if(v.type == Bike) v.currentInfo.amountPaid = hours*parkingLot.ratechart.perHourBike;
             else if(v.type == Car) v.currentInfo.amountPaid = hours*parkingLot.ratechart.perHourCar;
             else v.currentInfo.amountPaid = hours*parkingLot.ratechart.perHourHeavy;
             cout<<"Your amount to be paid is "<<v.currentInfo.amountPaid<<endl;
 
             v.parkingHistory.push_back(v.currentInfo);
-            if(v.type == Bike && !v.inCarParking) parkingLot.bikeCapacity++;
-            else if(v.type == Bike && v.inCarParking) parkingLot.carCapacity++;
-            else parkingLot.carCapacity++;
+            if(v.type == Bike && !v.inCarParking) parkingLot.bikeCapacity+=1;
+            else if(v.type == Bike && v.inCarParking) parkingLot.carCapacity+=1;
+            else parkingLot.carCapacity+=1;
+
+            parkingLots.push_back(parkingLot);
         };
 
         void addParkingLot(int carCapacity,int bikeCapacity,RateChart rc){
@@ -154,12 +160,7 @@ class Admin{
             for(auto i: vehicleList){
                 if(i.vehicleId == vehicle_id) v = i;
             }
-            for(auto i: v.parkingHistory){
-                    cout<<"Parking Lot ID -> "<<i.parkingLotId<<endl;
-                    cout<<"Parking Start -> "<<i.startTime<<endl;
-                    cout<<"Parking Ends -> "<<i.exitTime<<endl;
-                    cout<<"Total Amount -> "<<i.amountPaid<<"\n\n\n";
-            }
+            
             return v.parkingHistory;
         };
 };

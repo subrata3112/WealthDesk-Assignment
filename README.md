@@ -21,7 +21,7 @@ How to Run:-
 Known Bugs/Missings:-
 
 - There is no class for Parking Slots. So app doesn't realises whether it freed a bike space or car space.
-- No setters/getters used due to lack of time.
+- No setters/getters used.
 - For sake of simplicity, only hourly basis of rates are described in rateChart.
 - Admins can only access one parking lot at a time.
 - No errors/exception handling methods applied.
@@ -29,4 +29,5 @@ Known Bugs/Missings:-
 - User Info not getting saved.
 - Had to merge guard and admin users to avoid complications in some methods.
 - getHistory not working.
-- time objects are not handled properly. Thus TotalAmount is storing garbage value. 
+- time objects are not handled properly. Thus TotalAmount is storing garbage value.
+- Using Constructors was giving error while defining an empty object and also in passing an object in a method. Therefore removed. 
